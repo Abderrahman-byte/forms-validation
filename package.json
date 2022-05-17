@@ -1,14 +1,19 @@
 {
-  "name": "form-validation",
+  "name": "forms-validation",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "prepare": "npm run build",
     "build": "rimraf dist && tsc",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "forms",
+    "validaction",
+    "form",
+    "forms-validations"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
