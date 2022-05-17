@@ -54,10 +54,10 @@ export class FormValidator {
     }
 
     addRequiredFields(...allowedFields: string[]): void {
-        this.allowedFields.push(...allowedFields)
+        this.requiredFields.push(...allowedFields)
     }
 
     addAllowedFields(...requiredFields: string[]): void {
-        this.requiredFields.push(...requiredFields)
+        this.allowedFields.push(...requiredFields)
     }
 }
