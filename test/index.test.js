@@ -26,14 +26,14 @@ describe('Testing checking required and allowed fields', () => {
 		})
 	})
 
-    test('Validation form must check required fields', () => {
+	test('Validation form must check required fields', () => {
 		const formValidator = new FormValidator()
 
 		formValidator.addRequiredFields('username', 'password', 'age')
 
 		const errors = formValidator.validate({
 			username: 'username',
-			password: 'password'
+			password: 'password',
 		})
 
 		expect(errors.length).toBe(1)
@@ -41,5 +41,26 @@ describe('Testing checking required and allowed fields', () => {
 			field: 'age',
 			message: 'The field age is required.',
 		})
+	})
+
+	test('Validation form must required and allowed field', () => {
+		const formValidator = new FormValidator()
+
+		formValidator.addRequiredFields('username', 'password', 'email')
+		formValidator.addAllowedFields('age')
+
+		const errors = formValidator.validate({
+			username: 'password',
+			password: 'password',
+			age: 16,
+			password2: 'password',
+		})
+
+		expect(errors).toEqual(
+			expect.arrayContaining([
+				{ field: 'email', message: 'The field email is required.' },
+				{ field: 'password2', message: 'The field password2 is not allowed.' },
+			])
+		)
 	})
 })

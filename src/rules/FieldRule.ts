@@ -1,12 +1,11 @@
-export class FieldRule {
-    field: string
+import { ValidationRule } from "./Rule"
+
+export class FieldRule extends ValidationRule {
     rule: RegExp
-    message: string
 
     constructor(field: string, rule: RegExp, message: string) {
-        this.field = field
+        super(field, message)
         this.rule = rule
-        this.message = message
     }
 
     checkValue(value: string): boolean {

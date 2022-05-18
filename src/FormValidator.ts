@@ -1,16 +1,17 @@
-import { FieldRule } from "./FieldRule"
+import { FieldRule } from "./rules/FieldRule"
+import { ValidationRule } from "./rules/Rule"
 
 interface ValidationError {
     field: String
     message: String
 }
 
-const isNull = (value:any) => value === '' || value === null || value === undefined
+const isNull = (value: any) => value === null || value === undefined
 
 export class FormValidator {
     allowedFields: string[]
     requiredFields: string[]
-    rules: FieldRule[]
+    rules: ValidationRule[]
 
     constructor(rules?: FieldRule[], requiredFields?: string[], allowedFields?: string[]) {
         this.allowedFields = allowedFields || []
@@ -36,21 +37,37 @@ export class FormValidator {
 
         this.requiredFields.forEach(field => {
             if (!bodyFields.includes(field) || isNull(data[field])) {
-                errors.push({ field, message: `The field ${field} is required.`})
+                errors.push({ field, message: `The field ${field} is required.` })
             }
+        })
+
+        if (errors.length > 0) return errors
+
+        this.rules.forEach(rule => {
+            const field = rule.field
+
+            if (!bodyFields.includes(field) || isNull(data[field])) return
+
+            if (!rule.checkValue(data[field])) errors.push({ field, message: rule.message })
         })
 
         return errors
     }
 
     validate(data: Record<string, any>): ValidationError[] {
-        const errors:ValidationError[] = [...this.#checkRequiredFields(data), ...this.#checkAllowedFields(data)]
+        const errors: ValidationError[] = [...this.#checkRequiredFields(data), ...this.#checkAllowedFields(data)]
 
         return errors
     }
 
-    addRules(...rules: FieldRule[]): void {
-        this.rules.push(...rules)
+    addRules(...rules: ValidationRule[]): void {
+        rules.forEach(rule => {
+            if (!this.requiredFields.includes(rule.field) && !this.allowedFields.includes(rule.field)) {
+                this.addAllowedFields(rule.field)
+            }
+
+            this.rules.push(rule)
+        })
     }
 
     addRequiredFields(...allowedFields: string[]): void {
